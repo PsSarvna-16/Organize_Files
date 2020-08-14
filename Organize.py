@@ -6,23 +6,54 @@ import datetime
 
 """Source , Destination , Extension to perform action ,  and date Format for folder name"""
 
-#src= "C:\\Users\\Ps_Sarvna\\Desktop\\Src" 
+#src = "C:\\Users\\Ps_Sarvna\\Desktop\\Src" 
 #des = "C:\\Users\\Ps_Sarvna\\Desktop\\Des"
+#Orig_src = src
+
 Datetime = "%Y"
 Inc_sub = True
 Ext_Sort = True
 Ext_Spec  = True
+Ext_UnSort = True
+
 folder_names = []
 Images = ["Images" , ".jpg" , ".png" , ".gif" , "jpeg"]
 Videos = ["Videos" , ".mp4" , ".mpeg" , ".avi" , ".mkv"]
 Audio = ["Audio" , ".mp3" , ".wma" , ".amr" ]
 Softwares = ["Softwares" , ".exe"]
 
+Un_Ext = [".jpg"]
 Ext = [Images , Videos , Audio, Softwares ]
 
 #--------------------------------------------------------------------------------------------------------------------
 
-def Sort_files_mtime(src, des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec ): 
+def Unsort_files(src,Ext_UnSort):
+
+	fname = "UnSorted"
+	if Orig_src == src :
+		if fname not in os.listdir(Orig_src):
+			os.mkdir(os.path.join(Orig_src, fname))
+	files = os.listdir(src)
+
+	for file in files:
+		extension = os.path.splitext(file)[1]
+		if os.path.basename(file) == fname:
+			continue
+		
+		if os.path.isfile(os.path.join(src , file)):
+			if Ext_Unsort:
+				if extension not in Un_Ext:
+					continue
+			shutil.move(os.path.join(src , file) , os.path.join(Orig_src, fname))
+		else:
+			Unsort_files(os.path.join(src , file),Ext_UnSort)
+			try:
+				os.rmdir(os.path.join(src , file))
+			except:
+				pass
+#--------------------------------------------------------------------------------------------------------------------
+
+def Sort_files(src, des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec ): 
 	
 	"""
 	Function Process Step by step:
@@ -88,8 +119,10 @@ def Sort_files_mtime(src, des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec ):
 		else:
 			if Inc_sub:
 				if os.path.isdir(os.path.join(src , file)):
-					Sort_files_mtime(os.path.join(src , file),des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec )
+					Sort_files(os.path.join(src , file),des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec )
 
 #--------------------------------------------------------------------------------------------------------------------
 
-Sort_files_mtime(src ,des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec)
+#Sort_files(src ,des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec)
+
+#Unsort_files(src,Ext_UnSort)
