@@ -43,14 +43,14 @@ def sort_files_button():
 	else:
 		Ext_Sort = False
 		Ext_Spec = False
-
 	Sort_files(src ,des, datetime , Inc_sub, Ext_Sort ,Ext_Spec)
+	
+
 	
 
 
 #--------------------------------------------------------------------------------------------------------------------
 
-folder_names = []
 Images = ["Images" , ".jpg" , ".png" , ".gif" , "jpeg"]
 Videos = ["Videos" , ".mp4" , ".mpeg" , ".avi" , ".mkv"]
 Audio = ["Audio" , ".mp3" , ".wma" , ".amr" ]
@@ -89,14 +89,12 @@ def Sort_files(src, des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec ):
 	for file in files:
 		extension = os.path.splitext(file)[1]
 		if os.path.isfile(os.path.join(src , file)):
-			dtime = datetime.datetime.fromtimestamp(os.path.getmtime(os.path.join(src , file)))
 			if Ext_Spec:
 				find = False
 				for lists in Ext:
 					if extension in lists:
 						fname = lists[0]
 						find = True
-
 				if not find:
 					fname = "Others"
 					find = False
@@ -104,61 +102,68 @@ def Sort_files(src, des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec ):
 			elif Ext_Sort:
 				fname = os.path.splitext(file)[1].split(".")[1]
 			else:
+				dtime = datetime.datetime.fromtimestamp(os.path.getmtime(os.path.join(src , file)))
 				fname = dtime.strftime(Datetime)
 
-			if fname not in folder_names:
-				folder_names.append(fname)
-				if fname not in os.listdir(des):
+			if fname not in os.listdir(des):
 					os.mkdir(os.path.join(des , fname))
 
 			try :
 				shutil.move(os.path.join(src , file) , os.path.join(des , fname))
 			except:
-				Xfname = "Conflicts"
-				Xdes = "C:\\Users\\Ps_Sarvna\\Desktop\\Des\\Conflicts"
-				if Xfname not in os.listdir(des):
-					os.mkdir(os.path.join(des , Xfname))
-				if fname not in os.listdir(Xdes):
-					os.mkdir(os.path.join(Xdes , fname))
-					
-				shutil.move(os.path.join(src , file) , os.path.join(Xdes , fname))
+				#Xfname = "Conflicts"
+				#Xdes = "C:\\Users\\Ps_Sarvna\\Desktop\\Des\\Conflicts"
+				#if Xfname not in os.listdir(des):
+				#	os.mkdir(os.path.join(des , Xfname))
+				#if fname not in os.listdir(Xdes):
+				#	os.mkdir(os.path.join(Xdes , fname))
+				#try:	
+				#	shutil.move(os.path.join(src , file) , os.path.join(Xdes , fname))
+				#except:
+				pass
 		
 		else:
 			if Inc_sub:
 				if os.path.isdir(os.path.join(src , file)):
 					Sort_files(os.path.join(src , file),des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec )
+					try:
+						os.rmdir(os.path.join(src , file))
+					except:
+						pass
+		
 
 #--------------------------------------------------------------------------------------------------------------------
 
-gui_title = tk.Label(text = "PsSarvna" , fg = "black", font= ("Fixedsys",28))
-gui_title.pack()
-
-Radio_btn1 = tk.Radiobutton(text="Sort - Month/Year" , value = "%b_%Y" , variable = daterb)
-Radio_btn1.pack()
-Radio_btn2 = tk.Radiobutton(text="Sort - Year" , value = "%Y", variable = daterb)
-Radio_btn2.pack()
-Radio_btn3 = tk.Radiobutton(text="Sort - Ext" , value = "ext", variable = daterb)
-Radio_btn3.pack()
-Radio_btn4 = tk.Radiobutton(text="Sort - Ext-Spec" , value = "extspec", variable = daterb)
-Radio_btn4.pack()
+gui_title = tk.Label(text = "Organize files" , fg = "black", font= ("Fixedsys",24) )
+gui_title.place(x =200 , y = 30)
 
 
-Src_entry = tk.Entry(width = "40" )
-Src_entry.pack()
-Src_browse = tk.Button(text = "Browse" , command = get_src_direct)
-Src_browse.pack()
+Radio_btn1 = tk.Radiobutton(window,text="Sort - Month/Year" , value = "%b_%Y" , variable = daterb)
+Radio_btn1.place(x =100 , y = 130)
+Radio_btn2 = tk.Radiobutton(window,text="Sort - Year      ." , value = "%Y", variable = daterb)
+Radio_btn2.place(x =100 , y = 170)
+Radio_btn3 = tk.Radiobutton(window,text="Sort - Ext       ." , value = "ext", variable = daterb)
+Radio_btn3.place(x =100 , y = 210)
+Radio_btn4 = tk.Radiobutton(window,text="Sort - Ext-Spec  " , value = "extspec", variable = daterb)
+Radio_btn4.place(x =100 , y = 250)
+
+Src_entry = tk.Entry(window ,width = 40)
+Src_entry.place(x =50 , y = 320)
+Src_browse = tk.Button(window,text = "Browse" , command = get_src_direct)
+Src_browse.place(x =300 , y = 315)
+Submit = tk.Button(window,text = "Submit" , command = sort_files_button )
+Submit.place(x =435 , y = 330)
 
 
-Des_entry = tk.Entry(width = "40" )
-Des_entry.pack()
-Des_browse = tk.Button(text = "Browse" , command = get_des_direct)
-Des_browse.pack()
+
+
+Des_entry = tk.Entry(window,width = 40)
+Des_entry.place(x =50 , y = 360)
+Des_browse = tk.Button(window,text = "Browse" , command = get_des_direct)
+Des_browse.place(x =300 , y = 355)
 
 Inc_chec = tk.Checkbutton(text = "Include Folders" , onvalue = True , offvalue  = False , variable = Inc_check)
-Inc_chec.pack()
-
-Submit = tk.Button(text = "Submit" , command = sort_files_button)
-Submit.pack()
+Inc_chec.place(x =375 , y = 235)
 
 window.mainloop()
 
