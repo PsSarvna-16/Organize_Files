@@ -15,7 +15,11 @@ window.maxsize(width = "600" , height = "500")
 daterb = tk.StringVar()
 Inc_check = tk.BooleanVar()
 Over_check = tk.BooleanVar()
-move = tk.BooleanVar()
+copy = tk.BooleanVar()
+Files_Skipped = 0
+Files_Moved = 0
+Files_OverWrited = 0
+Files_Copied = 0
 
 
 def get_src_direct():
@@ -40,7 +44,7 @@ def sort_files_button():
 	src = Src_entry.get()
 	des = Des_entry.get()
 	datetime = daterb.get()
-	Move  = move.get()
+	Copy  = copy.get()
 	if len(datetime) < 2:
 		tk.messagebox.showerror("Error!", "Select any one type.")
 		return
@@ -52,7 +56,7 @@ def sort_files_button():
 		if Orig_src == src :
 			if fname not in os.listdir(src):
 				os.mkdir(os.path.join(src, fname))
-			Unsort_files(src , src, Inc_sub  , OverWrite,Move )
+			Unsort_files(src , src, Inc_sub  , OverWrite, Copy )
 			return
 
 	if datetime == "ext":
@@ -64,9 +68,14 @@ def sort_files_button():
 	else:
 		Ext_Sort = False
 		Ext_Spec = False
-	Sort_files(src ,des, datetime , Inc_sub, Ext_Sort ,Ext_Spec, OverWrite ,Move )
+	Sort_files(src ,des, datetime , Inc_sub, Ext_Sort ,Ext_Spec, OverWrite ,Copy )
+	print(Files_Copied)
+	print(Files_Moved)
+	print(Files_OverWrited)
+	print(Files_Skipped)
 
-def Unsort_files(Orig_src , src, Inc_sub , OverWrite,Move):
+
+def Unsort_files(Orig_src , src, Inc_sub , OverWrite,Copy):
 
 	fname = "UnSorted"
 	files = os.listdir(src)
@@ -80,7 +89,7 @@ def Unsort_files(Orig_src , src, Inc_sub , OverWrite,Move):
 			#	if extension not in Un_Ext:
 			#		continue
 			try :
-				if Move:
+				if not Copy:
 					shutil.move(os.path.join(src , file) , os.path.join(Orig_src , fname))
 				else:
 					try:
@@ -96,7 +105,7 @@ def Unsort_files(Orig_src , src, Inc_sub , OverWrite,Move):
 
 		else:
 			if Inc_sub:
-				Unsort_files(Orig_src, os.path.join(src , file), Inc_sub , OverWrite,Move )
+				Unsort_files(Orig_src, os.path.join(src , file), Inc_sub , OverWrite,Copy )
 				try:
 					os.rmdir(os.path.join(src , file))
 				except:
@@ -109,12 +118,11 @@ def Reset_Variables():
 	Radio_btn4.deselect()
 	Radio_btn3.deselect()
 	Radio_btn5.deselect()
-	Radio_btn6.deselect()
-	Radio_btn7.deselect()
 	Des_entry.delete(0, tk.END)
 	Src_entry.delete(0, tk.END)
 	Inc_check.set(False)
 	Over_check.set(False)
+	copy.set(False)
 
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -128,7 +136,7 @@ Ext = [Images , Videos , Audio, Softwares ]
 
 #--------------------------------------------------------------------------------------------------------------------
 
-def Sort_files(src, des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec , OverWrite,Move  ): 
+def Sort_files(src, des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec , OverWrite,Copy ): 
 	
 	"""
 	Function Process Step by step:
@@ -177,18 +185,23 @@ def Sort_files(src, des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec , OverWrite,Move
 					os.mkdir(os.path.join(des , fname))
 
 			try :
-				if Move:
+				if not Copy:
 					shutil.move(os.path.join(src , file) , os.path.join(des , fname))
+					Files_Moved += 1
 				else:
 					try:
 						shutil.copy2(os.path.join(src , file) ,os.path.join(os.path.join(des , fname),file))
+						Files_Copied += 1
 					except:
+						Files_Skipped += 1
 						pass
 			except:
 				if OverWrite:
 					try:
 						shutil.move(os.path.join(src , file) , os.path.join(os.path.join(des , fname),file))
+						Files_OverWrited += 1
 					except:
+						Files_Skipped += 1
 						pass
 				#Xfname = "Conflicts"
 				#Xdes = "C:\\Users\\Ps_Sarvna\\Desktop\\Des\\Conflicts"
@@ -203,7 +216,7 @@ def Sort_files(src, des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec , OverWrite,Move
 		else:
 			if Inc_sub:
 				if os.path.isdir(os.path.join(src , file)):
-					Sort_files(os.path.join(src , file),des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec, OverWrite ,Move )
+					Sort_files(os.path.join(src , file),des, Datetime , Inc_sub, Ext_Sort ,Ext_Spec, OverWrite ,Copy )
 					try:
 						os.rmdir(os.path.join(src , file))
 					except:
@@ -232,17 +245,19 @@ Radio_btn4.place(x =100 , y = 250)
 Radio_btn5 = tk.Radiobutton(window,text="UnSort" , value = "unsort", variable = daterb , command = Pre_unsort,tristatevalue = "x")
 Radio_btn5.place(x =375 , y = 130)
 
-Radio_btn6 = tk.Radiobutton(window,text="Move" , value = True, variable = move,tristatevalue = "x")
-Radio_btn6.place(x =350 , y = 150)
-Radio_btn7 = tk.Radiobutton(window,text="Copy" , value = False, variable = move , tristatevalue = "x")
-Radio_btn7.place(x =450 , y = 150)
+
+Move_chec = tk.Checkbutton(text = "Move" , onvalue = False , offvalue  = True , variable = copy)
+Move_chec.place(x =375 , y = 175)
+Copy_chec = tk.Checkbutton(text = "Copy" , onvalue = True , offvalue  = False , variable = copy)
+Copy_chec.place(x =375 , y = 200)
+
 
 
 Inc_chec = tk.Checkbutton(text = "Include Folders" , onvalue = True , offvalue  = False , variable = Inc_check)
-Inc_chec.place(x =375 , y = 235)
+Inc_chec.place(x =375 , y = 225)
 
 Overwrite = tk.Checkbutton(text = "Overwrite Exist files" , onvalue = True , offvalue  = False , variable = Over_check)
-Overwrite.place(x =375 , y = 255)
+Overwrite.place(x =375 , y = 250)
 
 
 
@@ -263,10 +278,8 @@ Reset = tk.Button(window,text = "Reset " ,width = 4, command = Reset_Variables )
 Reset.place(x =448 , y = 355)
 
 Status_entry = tk.Entry(window ,width = 80,background= "#EBEBEB" , fg = "#39a75e")
-#Status_entry.configure(state  = "diabled")
 Status_entry.place(x =50 , y = 430)
 
-window.mainloop()
+window.mainloop()  
 
-
-#--------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------
