@@ -59,9 +59,25 @@ def sort_files_button():
 	des = Des_entry.get()
 	Sort_type = Combo_sort.get()
 	Copy  = copy.get()
+	sort_type = ["FileType" , "Extensions" , "Year" , "Mon_Year"]
+
 	if len(Sort_type) < 2:
+		print(Sort_type)
 		tk.messagebox.showerror("Error!", "Select any one type.")
 		return
+	if Sort_type not in sort_type:
+		tk.messagebox.showerror("Error!", "Select Valid Type")
+
+	if not os.path.isdir(src):
+		tk.messagebox.showerror("Error!", "Select Valid Source Directory")
+		return
+
+	if not os.path.isdir(des):
+		tk.messagebox.showerror("Error!", "Select Valid Destination Directory")
+		return
+
+
+
 	Inc_sub = Inc_check.get()
 	OverWrite = Over_check.get()
 	Orig_src = src
@@ -184,8 +200,8 @@ lineh.place(x =40, y = 395)
 Combo_sort = ttk.Combobox(window, values = ('Year' , 'Mon_Year' , 'FileType' , 'Extensions'))
 Combo_sort.place(x = 100, y = 150)
 
-Combo_Unsort = ttk.Combobox(window, values = ('Year' , 'Mon_Year' , 'FileType' , 'Extensions'))
-Combo_Unsort.place(x = 100, y = 150)
+#Combo_Unsort = ttk.Combobox(window, values = ('Year' , 'Mon_Year' , 'FileType' , 'Extensions'))
+#Combo_Unsort.place(x = 100, y = 150)
 
 Move_chec = tk.Checkbutton(text = "Move" , onvalue = False , offvalue  = True , variable = copy)
 Move_chec.place(x =375 , y = 175)
