@@ -20,11 +20,12 @@ copy = tk.BooleanVar()
 
 Images = ["Images" , ".jpg" , ".png" , ".gif" , "jpeg"]
 Videos = ["Videos" , ".mp4" , ".mpeg" , ".avi" , ".mkv"]
-Audio = ["Audio" , ".mp3" , ".wma" , ".amr" ]
+Audios = ["Audios" , ".mp3" , ".wma" , ".amr" ]
 Softwares = ["Softwares" , ".exe"]
+Documents = ["Documets" , ".pdf"]
 
 
-Ext = [Images , Videos , Audio, Softwares ]
+Ext = [Images , Videos , Audios, Softwares,Documents ]
 #--------------------------------------------------------------------------------------------------------------------
 
 def get_src_direct():
@@ -37,13 +38,11 @@ def get_des_direct():
 	Des_entry.delete(0, tk.END)
 	Des_entry.insert(0 , des)
 
-def Pre_unsort():
-	Des_browse.configure(state = "disabled")
-	Des_entry.configure(state = "disabled")
+def Combo_sort():
+	Combo_Unsort.set('')
 
-def sort_pre():
-	Des_browse.configure(state = "normal")
-	Des_entry.configure(state = "normal")
+def Combo_Unsort():
+	Combo_sort.set('')
 
 def Reset_Variables():
 	Des_entry.delete(0, tk.END)
@@ -55,41 +54,45 @@ def Reset_Variables():
 
 
 def sort_files_button():
+
 	src = Src_entry.get()
 	des = Des_entry.get()
 	Sort_type = Combo_sort.get()
+	Unsort_type = Combo_Unsort.get()
 	Copy  = copy.get()
-	sort_type = ["FileType" , "Extensions" , "Year" , "Mon_Year"]
+	Inc_sub = Inc_check.get()
+	OverWrite = Over_check.get()
 
-	if len(Sort_type) < 2:
-		print(Sort_type)
+	sort_type = ["FileType" , "Extensions" , "Year" , "Mon_Year"]
+	unsort_type = ['All' ,'Images' , 'Videos' , 'Audios', 'Documents', 'Softwares']
+
+	if len(Sort_type) < 2 and len(Unsort_type) < 2:
 		tk.messagebox.showerror("Error!", "Select any one type.")
 		return
-	if Sort_type not in sort_type:
-		tk.messagebox.showerror("Error!", "Select Valid Type")
 
 	if not os.path.isdir(src):
 		tk.messagebox.showerror("Error!", "Select Valid Source Directory")
 		return
-
 	if not os.path.isdir(des):
 		tk.messagebox.showerror("Error!", "Select Valid Destination Directory")
 		return
 
-
-
-	Inc_sub = Inc_check.get()
-	OverWrite = Over_check.get()
-	Orig_src = src
-	if datetime == "unsort":
-		fname = "UnSorted"
-		if Orig_src == src :
-			if fname not in os.listdir(src):
-				os.mkdir(os.path.join(src, fname))
-			Unsort_files(src , src, Inc_sub  , OverWrite, Copy )
+	if len(Unsort_type) < 2 :
+		if Sort_type not in sort_type:
+			tk.messagebox.showerror("Error!", "Select Valid Sort Type")
 			return
 
-	Sort_files(src ,des, Inc_sub,Sort_type, OverWrite ,Copy)
+		Sort_files(src, des, Inc_sub,Sort_type ,OverWrite ,Copy  )
+
+	if len(Sort_type) < 2 :
+		if Unsort_type not in unsort_type:
+			tk.messagebox.showerror("Error!", "Select Valid UnSort Type")
+			return
+		if "Unsorted" not in os.listdir(des):
+			os.mkdir(os.path.join(des,"Unsorted"))
+		des = os.path.join(des,"Unsorted")
+		Unsort_files( src , des,Unsort_type, Inc_sub , OverWrite,Copy)
+
 
 #--------------------------------------------------------------------------------------------------------------------
 
@@ -149,7 +152,7 @@ def Sort_files(src, des,  Inc_sub,Sort_type ,OverWrite ,Copy  ):
 						pass
 
 
-def Unsort_files(Orig_src , src, Inc_sub , OverWrite,Copy):
+def Unsort_files( src , des,Unsort_type, Inc_sub , OverWrite,Copy):
 
 	fname = "UnSorted"
 	files = os.listdir(src)
@@ -159,27 +162,42 @@ def Unsort_files(Orig_src , src, Inc_sub , OverWrite,Copy):
 			continue
 		
 		if os.path.isfile(os.path.join(src , file)):
-			#if Ext_Unsort:
-			#	if extension not in Un_Ext:
-			#		continue
+			if Unsort_type == "All":
+				pass
+			elif Unsort_type == "Images":
+				if extension not in Images:
+					continue
+			elif Unsort_type == "Videos":
+				if extension not in Videos:
+					continue
+			elif Unsort_type == "Audios":
+				if extension not in Audios:
+					continue
+			elif Unsort_type == "Documents":
+				if extension not in Documents:
+					continue
+			elif Unsort_type == "Softwares":
+				if extension not in Softwares:
+					continue
 			try :
 				if not Copy:
-					shutil.move(os.path.join(src , file) , os.path.join(Orig_src , fname))
+					shutil.move(os.path.join(src , file) , os.path.join(des))
 				else:
 					try:
-						shutil.copy2(os.path.join(src , file) ,os.path.join(os.path.join(Orig_src , fname),file))
+						shutil.copy2(os.path.join(src , file) ,os.path.join(os.path.join(des),file))
 					except:
 						pass
 			except:
 				if OverWrite:
 					try:
-						shutil.move(os.path.join(src , file) , os.path.join(os.path.join(Orig_src , fname),file))
+						shutil.move(os.path.join(src , file) , os.path.join(os.path.join(des ),file))
 					except:
 						pass
 
 		else:
 			if Inc_sub:
-				Unsort_files(Orig_src, os.path.join(src , file), Inc_sub , OverWrite,Copy )
+				print(file)
+				Unsort_files(os.path.join(src , file), des,Unsort_type, Inc_sub , OverWrite,Copy)
 				try:
 					os.rmdir(os.path.join(src , file))
 				except:
@@ -222,10 +240,10 @@ lineh.place(x =35, y = 270)
 lineh = tk.Canvas(window,width = 500 , height = 1 , bg = "#DCDCDC")
 lineh.place(x =35, y = 405)
 
-Combo_sort = ttk.Combobox(window, values = ('Year' , 'Mon_Year' , 'FileType' , 'Extensions'),width = 15)
+Combo_sort = ttk.Combobox(window, values = ('Year' , 'Mon_Year' , 'FileType' , 'Extensions'),width = 15,postcommand = Combo_sort)
 Combo_sort.place(x = 150, y = 160)
 
-Combo_Unsort = ttk.Combobox(window, values = ('Year' , 'Mon_Year' , 'FileType' , 'Extensions'),width = 15)
+Combo_Unsort = ttk.Combobox(window, values = ('All' ,'Images' , 'Videos' , 'Audios', 'Documents', 'Softwares'),width = 15, postcommand = Combo_Unsort)
 Combo_Unsort.place(x = 150, y = 225)
 
 Move_chec = tk.Checkbutton(text = "Move" , onvalue = False , offvalue  = True , variable = copy)
