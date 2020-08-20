@@ -190,39 +190,64 @@ def Unsort_files(Orig_src , src, Inc_sub , OverWrite,Copy):
 
 gui_title = tk.Label(text = "Organize files" , fg = "black", font= ("Fixedsys",24) )
 gui_title.place(x =200 , y = 30)
-linev = tk.Canvas(window,width = 1 , height = 195 , bg = "#DCDCDC")
+
+
+step1_lb = tk.Label(text = "Step 1: Select the Type" , fg = "black", font= ("Fixedsys") )
+step1_lb.place(x =35 , y = 100)
+step2_lb = tk.Label(text = "Step 2: Select Preferred Option" , fg = "black", font= ("Fixedsys") )
+step2_lb.place(x =300 , y = 100)
+step3_lb = tk.Label(text = "Step 3: Select Directories" , fg = "black", font= ("Fixedsys") )
+step3_lb.place(x = 35 , y = 280)
+step4_lb = tk.Label(text = "Step 4: Submit/Reset" , fg = "black", font= ("Fixedsys") )
+step4_lb.place(x = 380 , y = 280)
+
+sort_lb = tk.Label(text = "Sorting Types : " , fg = "black", font= ("Fixedsys") )
+sort_lb.place(x = 50 , y = 135)
+Unsort_lb = tk.Label(text = "UnSorting Types :" , fg = "black", font= ("Fixedsys") )
+Unsort_lb.place(x = 50 , y = 200)
+
+Src_lb = tk.Label(text = "Source Directory" , fg = "black", font= ("Fixedsys") )
+Src_lb.place(x = 50 , y = 305)
+Des_lb = tk.Label(text = "Destination Directory" , fg = "black", font= ("Fixedsys") )
+Des_lb.place(x = 50 , y = 355)
+Status_lb = tk.Label(text = "Status Panel" , fg = "black", font= ("Fixedsys") )
+Status_lb.place(x = 35 , y = 415)
+
+linev = tk.Canvas(window,width = 1 , height = 175 , bg = "#DCDCDC")
 linev.place(x =280, y = 100)
+linev = tk.Canvas(window,width = 1 , height = 135 , bg = "#DCDCDC")
+linev.place(x = 360, y = 270)
 lineh = tk.Canvas(window,width = 500 , height = 1 , bg = "#DCDCDC")
-lineh.place(x =40, y = 295)
+lineh.place(x =35, y = 270)
 lineh = tk.Canvas(window,width = 500 , height = 1 , bg = "#DCDCDC")
-lineh.place(x =40, y = 395)
+lineh.place(x =35, y = 405)
 
-Combo_sort = ttk.Combobox(window, values = ('Year' , 'Mon_Year' , 'FileType' , 'Extensions'))
-Combo_sort.place(x = 100, y = 150)
+Combo_sort = ttk.Combobox(window, values = ('Year' , 'Mon_Year' , 'FileType' , 'Extensions'),width = 15)
+Combo_sort.place(x = 150, y = 160)
 
-#Combo_Unsort = ttk.Combobox(window, values = ('Year' , 'Mon_Year' , 'FileType' , 'Extensions'))
-#Combo_Unsort.place(x = 100, y = 150)
+Combo_Unsort = ttk.Combobox(window, values = ('Year' , 'Mon_Year' , 'FileType' , 'Extensions'),width = 15)
+Combo_Unsort.place(x = 150, y = 225)
 
 Move_chec = tk.Checkbutton(text = "Move" , onvalue = False , offvalue  = True , variable = copy)
-Move_chec.place(x =375 , y = 175)
+Move_chec.place(x =370 , y = 135)
 Copy_chec = tk.Checkbutton(text = "Copy" , onvalue = True , offvalue  = False , variable = copy)
-Copy_chec.place(x =375 , y = 200)
+Copy_chec.place(x =370 , y = 165)
 
 Inc_chec = tk.Checkbutton(text = "Include Folders" , onvalue = True , offvalue  = False , variable = Inc_check)
-Inc_chec.place(x =375 , y = 225)
+Inc_chec.place(x =370 , y = 195)
 
 Overwrite = tk.Checkbutton(text = "Overwrite Exist files" , onvalue = True , offvalue  = False , variable = Over_check)
-Overwrite.place(x =375 , y = 250)
+Overwrite.place(x =370 , y = 225)
 
 Src_entry = tk.Entry(window ,width = 40)
-Src_entry.place(x =50 , y = 320)
+Src_entry.place(x =50 , y = 325)
 Src_browse = tk.Button(window,text = "Browse" , command = get_src_direct)
-Src_browse.place(x =300 , y = 315)
+Src_browse.place(x =300 , y = 320)
 
 Des_entry = tk.Entry(window,width = 40)
-Des_entry.place(x =50 , y = 360)
+Des_entry.place(x =50 , y = 375)
 Des_browse = tk.Button(window,text = "Browse" , command = get_des_direct)
-Des_browse.place(x =300 , y = 355)
+Des_browse.place(x =300 , y = 370)
 
 
 Submit = tk.Button(window,text = "Submit" ,width = 8 , height = 1 , command = sort_files_button )
@@ -230,8 +255,8 @@ Submit.place(x =435 , y = 315)
 Reset = tk.Button(window,text = "Reset " ,width = 4, command = Reset_Variables )
 Reset.place(x =448 , y = 355)
 
-Status_entry = tk.Entry(window ,width = 80,background= "#EBEBEB" , fg = "#39a75e")
-Status_entry.place(x =50 , y = 430)
+Status_entry = tk.Entry(window ,width = 82,background= "#EBEBEB" , fg = "#39a75e")
+Status_entry.place(x =40 , y = 435)
 
 window.mainloop()  
 
