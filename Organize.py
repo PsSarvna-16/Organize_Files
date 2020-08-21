@@ -11,19 +11,35 @@ window.title("PsSarvna")
 window.geometry("500x400")
 window.minsize(width = "600" , height = "500")
 window.maxsize(width = "600" , height = "500")
+window.iconbitmap(r'C:\Users\Ps_Sarvna\Desktop\ico2.ico')
 
 #--------------------------------------------------------------------------------------------------------------------
+class Count:
+	def __init__(self,name):
+		self.name = name
+		self.value = 0
+	def increase(self):
+		self.value+=1
+	def reset(self):
+		self.value = 0
+
+#--------------------------------------------------------------------------------------------------------------------
+Moved  = Count("Moved")
+Copied  = Count("Copied")
+Skipped  = Count("Skipped")
+OverWrited  = Count("OverWrited")
+
+obj = [Moved, Copied, Skipped, OverWrited]
 
 Inc_check = tk.BooleanVar()
 Over_check = tk.BooleanVar()
 copy = tk.BooleanVar()
 
-Images = ["Images" , ".jpg" , ".png" , ".gif" , "jpeg"]
-Videos = ["Videos" , ".mp4" , ".mpeg" , ".avi" , ".mkv"]
-Audios = ["Audios" , ".mp3" , ".wma" , ".amr" ]
-Softwares = ["Softwares" , ".exe"]
-Documents = ["Documets" , ".pdf"]
-
+Images = ["Images" , ".jpg" , ".png" , ".gif" , "jpeg" , ".ico" , ".tiff"]
+Videos = ["Videos" , ".mp4" , ".mpeg" , ".avi" , ".mkv" , ".flv" , ".vob" , ".wmv" , ".3gp"]
+Audios = ["Audios" , ".mp3" , ".wma" , ".amr" ,".wav"]
+Softwares = ["Softwares" , ".exe", ".msi" , ",apk"]
+Documents = ["Documets" , ".pdf" , ".txt" , ".docx" , ".doc" , ".ppt" , ".pptx" , ".xls" , ".zip", ".rar" ]
 
 Ext = [Images , Videos , Audios, Softwares,Documents ]
 #--------------------------------------------------------------------------------------------------------------------
@@ -48,6 +64,7 @@ def Reset_Variables():
 	Des_entry.delete(0, tk.END)
 	Src_entry.delete(0, tk.END)
 	Combo_sort.set('')
+	Combo_Unsort.set('')
 	Inc_check.set(False)
 	Over_check.set(False)
 	copy.set(False)
@@ -83,6 +100,17 @@ def sort_files_button():
 			return
 
 		Sort_files(src, des, Inc_sub,Sort_type ,OverWrite ,Copy  )
+		Result = "\nCompleted Succesfully \n\n"
+		for objects in obj:
+			if objects.value !=0 :
+				Result = Result + "{}: {} files\n".format(objects.name , objects.value) 
+		Status_entry.delete(0, tk.END)
+		Status_entry.insert(0 , Result)
+		tk.messagebox.showinfo(title="File Organizer", message=Result)
+		Moved.reset()
+		Copied.reset()
+		Skipped.reset()
+		OverWrited.reset()
 
 	if len(Sort_type) < 2 :
 		if Unsort_type not in unsort_type:
@@ -131,17 +159,24 @@ def Sort_files(src, des,  Inc_sub,Sort_type ,OverWrite ,Copy  ):
 			try :
 				if not Copy:
 					shutil.move(os.path.join(src , file) , os.path.join(des , fname))
+					Moved.increase()
 				else:
 					try:
 						shutil.copy2(os.path.join(src , file) ,os.path.join(os.path.join(des , fname),file))
+						Copied.increase()
 					except:
+						Skipped.increase()
 						pass
 			except:
 				if OverWrite:
 					try:
 						shutil.move(os.path.join(src , file) , os.path.join(os.path.join(des , fname),file))
+						OverWrited.increase()
 					except:
+						Skipped.increase()
 						pass
+				else:
+					Skipped.increase()
 		else:
 			if Inc_sub:
 				if os.path.isdir(os.path.join(src , file)):
@@ -206,8 +241,8 @@ def Unsort_files( src , des,Unsort_type, Inc_sub , OverWrite,Copy):
 
 #--------------------------------------------------------------------------------------------------------------------
 
-gui_title = tk.Label(text = "Organize files" , fg = "black", font= ("Fixedsys",24) )
-gui_title.place(x =200 , y = 30)
+gui_title = tk.Label(text = "File Organizer" , fg = "black", font= ("Segoe Script",24) )
+gui_title.place(x =180 , y = 25)
 
 
 step1_lb = tk.Label(text = "Step 1: Select the Type" , fg = "black", font= ("Fixedsys") )
@@ -219,16 +254,16 @@ step3_lb.place(x = 35 , y = 280)
 step4_lb = tk.Label(text = "Step 4: Submit/Reset" , fg = "black", font= ("Fixedsys") )
 step4_lb.place(x = 380 , y = 280)
 
-sort_lb = tk.Label(text = "Sorting Types : " , fg = "black", font= ("Fixedsys") )
+sort_lb = tk.Label(text = "Sorting Types : " , fg = "black" )
 sort_lb.place(x = 50 , y = 135)
-Unsort_lb = tk.Label(text = "UnSorting Types :" , fg = "black", font= ("Fixedsys") )
+Unsort_lb = tk.Label(text = "UnSorting Types :" , fg = "black" )
 Unsort_lb.place(x = 50 , y = 200)
 
-Src_lb = tk.Label(text = "Source Directory" , fg = "black", font= ("Fixedsys") )
+Src_lb = tk.Label(text = "Source Directory" , fg = "black")
 Src_lb.place(x = 50 , y = 305)
-Des_lb = tk.Label(text = "Destination Directory" , fg = "black", font= ("Fixedsys") )
+Des_lb = tk.Label(text = "Destination Directory" , fg = "black" )
 Des_lb.place(x = 50 , y = 355)
-Status_lb = tk.Label(text = "Status Panel" , fg = "black", font= ("Fixedsys") )
+Status_lb = tk.Label(text = "Status Panel" , fg = "black" ,font= ("Fixedsys") )
 Status_lb.place(x = 35 , y = 415)
 
 linev = tk.Canvas(window,width = 1 , height = 175 , bg = "#DCDCDC")
