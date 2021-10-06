@@ -11,7 +11,7 @@ window.title("PsSarvna")
 window.geometry("500x400")
 window.minsize(width = "600" , height = "500")
 window.maxsize(width = "600" , height = "500")
-window.iconbitmap(r'Image.ico')
+window.iconbitmap(r'Image.png')
 
 #--------------------------------------------------------------------------------------------------------------------
 class Count:
